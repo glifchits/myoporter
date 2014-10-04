@@ -33,8 +33,23 @@
           }
         };
         window.panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
-      }
-      var startInit = function() { return startAtCoordinates(googleTo); }; google.maps.event.addDomListener(window, 'load', startInit);
+      };
+
+      var startInit = function() {
+        if (navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(function(currentPosition) {
+            var lat = currentPosition.coords.latitude;
+            var lng = currentPosition.coords.longitude;
+            var currentLatLng = getLatLng(lat, lng);
+            return startAtCoordinates(currentLatLng);
+          });
+        }
+        else {
+          alert("GeoLocation not available.");
+        }
+        return startAtCoordinates(googleTo);
+      };
+      google.maps.event.addDomListener(window, 'load', startInit);
     </script>
   </head>
   <body>
