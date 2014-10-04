@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Myo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="myojs/myojs-0.8.6.js"></script>
+    <script src="datadump.js"></script>
+  </head>
+  <body>
+    <h3>Myo data</h3>
+
+    <div>
+      Time: <span id="timestamp"></span>
+      Signal strength: <span id="rssi">n/a</span>
+    </div>
+
+    <div>
+      Pose: <span id="pose">(none yet)</span>
+    </div>
+
+    <div id="myodata">
+      <div id="rotation">
+        <h5>Rotation</h5>
+        <pre></pre>
+        <div class="graph"></div>
+      </div>
+      <div id="euler">
+        <h5>Euler</h5>
+        <pre></pre>
+        <div class="graph"></div>
+      </div>
+      <div id="accel">
+        <h5>Accel</h5>
+        <pre></pre>
+        <div class="graph"></div>
+      </div>
+      <div id="gyro">
+        <h5>Gyro</h5>
+        <pre></pre>
+        <div class="graph"></div>
+      </div>
+    </div>
+
+    <script>
+      var initMyo = function() {
+        'use strict';
+        var hub = new Myo.Hub();
+
+        hub.on("frame", function(frame) {
+          var data = frame.data;
+
+          if (data.rotation === undefined) {
+            // got an RSSI event
+            handleRSSI(data);
+          } else {
+            handleData(data);
+          }
+
+        });
+      };
+
+      var handleRSSI = function(data) {
+        $("#rssi").text(data.rssi);
+      };
+
+      var jsonToString = function(json) {
+        return JSON.stringify(json, null, '\t');
+      };
+
+      var handleData = function(data) {
+        $("#myodata #rotation pre").text(jsonToString(data.rotation));
+        $("#myodata #euler pre").text(jsonToString(data.euler));
+        $("#myodata #accel pre").text(jsonToString(data.accel));
+        $("#myodata #gyro pre").text(jsonToString(data.gyro));
+
+        if (data.pose) {
+          console.info(data.pose);
+          var type = data.pose.type;
+          var text = "n/a";
+          if (type === 0) {
+            text = "rest"; 
+          } else if (type === 1) {
+            text = "fist";
+          } else if (type === 2) {
+            text = "wave in";
+          } else if (type === 3) {
+            text = "wave out";
+          } else if (type === 4) {
+            text = "spread out";
+          } else if (type === 5) {
+            text = "thumb to pinky";
+          } else if (type === 6) {
+            text = "thumb to pinky";
+          } else {
+            text = "unknown, got type = "+type;
+          }
+          $("#pose").text("[" + type + "] " + text);
+        }
+      };
+      initMyo();
+    </script>
+  </body>
+</html>
