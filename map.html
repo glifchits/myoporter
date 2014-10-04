@@ -3,19 +3,29 @@
   <head>
     <title>Myo Street View</title>
     <style type="text/css">
-      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
-      #pointer {
-        height: 5px;
-        width: 5px;
-        color: red;
-        position: absolute;
-        top: 0; left: 0;
+      html, body, #map-canvas {
+          height: 100%; margin: 0; padding: 0;
+      }
+      #lean_overlay {
+          position: fixed;
+          z-index:100;
+          top: 0px;
+          left: 0px;
+          height:100%;
+          width:100%;
+          background: #000;
+          display: none;
       }
     </style>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAk2PrW5CDvb_dGK8PDthfZ95lYgM2hGbQ"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAk2PrW5CDvb_dGK8PDthfZ95lYgM2hGbQ"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="myojs/myojs-0.8.6.js"></script>
+    <script src="js/vex.combined.min.js"></script>
+    <script src="js/microphone.js"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-os';</script>
+    <link rel="stylesheet" href="css/microphone.css" />
+    <link rel="stylesheet" href="css/vex.css" />
+    <link rel="stylesheet" href="css/vex-theme-os.css" />
     <script type="text/javascript">
       var getLatLng = function(lat, lng) {
         return new google.maps.LatLng(lat, lng);
@@ -54,8 +64,8 @@
     </script>
   </head>
   <body>
-    <div id="pointer"></div>
     <div id="map-canvas"></div>
+    <div id="voice-modal">Speak up</div>
     <script>
       var initMyo = function() {
         'use strict';
@@ -75,6 +85,11 @@
 
       var handleRSSI = function(data) {
         console.log("got rssi:", data);
+      };
+
+      var setStreetView = function(locationName) {
+        var loc = getLatLng(34.9028719,-99.3017619);
+        startAtCoordinates(loc);
       };
 
       function Drag() {
@@ -114,11 +129,40 @@
       };
       window.drag = new Drag();
 
-
       var invokeVoiceCommand = function() {
-
+        console.log("invoke voice command");
+        vex.open({
+          content: "<div id='microphone'></div>"+
+                   "<div id='result'></div>"+
+                   "<div id='info'></div>",
+          
+          afterOpen: function() {
+            var mic = new Wit.Microphone(document.getElementById("microphone"));
+            var info = function (msg) {
+              document.getElementById("info").innerHTML = msg;
+            };
+            mic.onready = function () {
+              info("Microphone is ready to record");
+            };
+            mic.onaudiostart = function () {
+              info("Recording started");
+            };
+            mic.onaudioend = function () {
+              info("Recording stopped, processing started");
+            };
+            mic.onerror = function (err) {
+              info("Error: " + err);
+            };
+            mic.onresult = function (intent, entities) {
+              var locationName = entities[0];
+              setStreetView(locationName);
+            };
+            mic.connect("MIXVQH73JWBK67JNLCV3O7MY57UOAGRD");
+            // mic.start();
+            // mic.stop();
+          }
+        });
       };
-
 
       var handleData = function(data) {
         //console.log("got data:", data);
