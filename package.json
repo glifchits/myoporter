@@ -1,4 +1,8 @@
 {
     "name": "myo-street-view",
-    "main": "./html/index.html"
+    "main": "index.html",
+    "version": "0.0.1",
+    "dependencies": {
+        "express": "4.9.5"
+    }
 }
