@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NCL">
+      <UniqueIdentifier>{757439d2-5661-4c29-abc2-d41594682a65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NCL\Release">
+      <UniqueIdentifier>{5b19e097-e7e5-490c-9989-9dab7548c091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NCL\Release\Win32">
+      <UniqueIdentifier>{874d5c4c-b7a3-4928-a9a3-f574705c5c84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NCL\Release\x64">
+      <UniqueIdentifier>{2cc035a4-af33-4d62-94f6-0b4244e6abc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NCL\Debug">
+      <UniqueIdentifier>{da3d5003-03f3-4b57-a5aa-a96166d1c22a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NCL\Debug\Win32">
+      <UniqueIdentifier>{65db5084-350b-46ff-aef4-3d494d2e5f14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NCL\Debug\x64">
+      <UniqueIdentifier>{7217bee4-ba44-4210-a73c-8b8f0ea8f764}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ncl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\nclWin\Release\x64\NCL.lib">
+      <Filter>NCL\Release\x64</Filter>
+    </Library>
+    <Library Include="..\nclWin\Release\Win32\NCL.lib">
+      <Filter>NCL\Release\Win32</Filter>
+    </Library>
+    <Library Include="..\nclWin\Debug\x64\NCL.lib">
+      <Filter>NCL\Debug\x64</Filter>
+    </Library>
+    <Library Include="..\nclWin\Debug\Win32\NCL.lib">
+      <Filter>NCL\Debug\Win32</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

@@ -33,8 +33,24 @@
           }
         };
         window.panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
-      }
-      var startInit = function() { return startAtCoordinates(googleTo); }; google.maps.event.addDomListener(window, 'load', startInit);
+      };
+
+      var startInit = function() {
+        if (navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(function(currentPosition) {
+            var lat = currentPosition.coords.latitude;
+            var lng = currentPosition.coords.longitude;
+            var currentLatLng = getLatLng(lat, lng);
+            startAtCoordinates(currentLatLng);
+          });
+        }
+        else {
+          alert("GeoLocation not available.");
+        }
+        // start in the desert to be brutally sure that the geolocation is working
+        startAtCoordinates(getLatLng(34.9028719,-99.3017619));
+      };
+      google.maps.event.addDomListener(window, 'load', startInit);
     </script>
   </head>
   <body>
@@ -98,6 +114,12 @@
       };
       window.drag = new Drag();
 
+
+      var invokeVoiceCommand = function() {
+
+      };
+
+
       var handleData = function(data) {
         //console.log("got data:", data);
         if (data.pose) {
@@ -109,11 +131,15 @@
             drag.start(panorama.getPov(), data);
           }
 
+          if (pose === 4) { // got spread out
+            invokeVoiceCommand();
+          }
+
           if (pose === 0 && window.prevPose === 1) { // rest and the previous pose was fist
             drag.stop(data);
           }
 
-          if (pose === 0 || pose === 1) {
+          if (pose === 0 || pose === 1) { // save previous pose for fist and rest
             window.prevPose = pose;
           }
         }
