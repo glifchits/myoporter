@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                                <!DOCTYPE html>
 <html>
   <head>
     <title>Myo Street View</title>
@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="css/microphone.css" />
     <link rel="stylesheet" href="css/vex.css" />
     <link rel="stylesheet" href="css/vex-theme-os.css" />
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script type="text/javascript">
       var getLatLng = function(lat, lng) {
         return new google.maps.LatLng(lat, lng);
@@ -46,7 +47,7 @@
       };
 
       var startInit = function() {
-        if (navigator.geolocation){
+        /*if (navigator.geolocation){
           navigator.geolocation.getCurrentPosition(function(currentPosition) {
             var lat = currentPosition.coords.latitude;
             var lng = currentPosition.coords.longitude;
@@ -58,8 +59,19 @@
           alert("GeoLocation not available.");
         }
         // start in the desert to be brutally sure that the geolocation is working
-        startAtCoordinates(getLatLng(34.9028719,-99.3017619));
-      };
+        //startAtCoordinates(getLatLng(34.9028719,-99.3017619));*/
+        var locationName = "uptown waterloo, ontario";
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode( { 'address': locationName}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            //alert(results[0].geometry.location.lat() + ',' + results[0].geometry.location.lng());
+            startAtCoordinates(getLatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()));
+          }
+          else{
+            alert("GeoLocation not available.")
+          }
+      });
+      }
       google.maps.event.addDomListener(window, 'load', startInit);
     </script>
   </head>
@@ -88,8 +100,12 @@
       };
 
       var setStreetView = function(locationName) {
-        var loc = getLatLng(34.9028719,-99.3017619);
-        startAtCoordinates(loc);
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode( { 'address': locationName}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            startAtCoordinates(getLatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()));
+          }
+        })
       };
 
       function Drag() {
@@ -195,3 +211,5 @@
     </script>
   </body>
 </html>
+
+                            
