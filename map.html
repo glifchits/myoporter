@@ -4,26 +4,124 @@
     <title>Myo Street View</title>
     <style type="text/css">
       html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+      #pointer {
+        height: 5px;
+        width: 5px;
+        color: red;
+        position: absolute;
+        top: 0; left: 0;
+      }
     </style>
     <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAk2PrW5CDvb_dGK8PDthfZ95lYgM2hGbQ">
-    </script>
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAk2PrW5CDvb_dGK8PDthfZ95lYgM2hGbQ"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="myojs/myojs-0.8.6.js"></script>
     <script type="text/javascript">
-      function initialize() {
-        var fenway = new google.maps.LatLng(42.345573,-71.098326);
+      var getLatLng = function(lat, lng) {
+        return new google.maps.LatLng(lat, lng);
+      };
+
+      var fenway = getLatLng(42.345573,-71.098326);
+      var googleTo = getLatLng(43.650691, -79.383967);
+
+      function startAtCoordinates(latlng) {
         var panoramaOptions = {
-          position: fenway,
+          position: latlng,
           pov: {
-            heading: 34,
-            pitch: 10
+            heading: 0,
+            pitch: 0
           }
         };
-        var panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
+        window.panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
       }
-      google.maps.event.addDomListener(window, 'load', initialize);
+      var startInit = function() { return startAtCoordinates(googleTo); }; google.maps.event.addDomListener(window, 'load', startInit);
     </script>
   </head>
   <body>
-<div id="map-canvas"></div>
+    <div id="pointer"></div>
+    <div id="map-canvas"></div>
+    <script>
+      var initMyo = function() {
+        'use strict';
+        var hub = new Myo.Hub();
+
+        hub.on("frame", function(frame) {
+          var data = frame.data;
+
+          if (data.rotation === undefined) {
+            // got an RSSI event
+            handleRSSI(data);
+          } else {
+            handleData(data);
+          }
+        });
+      };
+
+      var handleRSSI = function(data) {
+        console.log("got rssi:", data);
+      };
+
+      function Drag() {
+        this.dragging = false;
+        this.startData = null;
+      };
+      Drag.prototype.start = function(startPov, startData) {
+        this.dragging = true;
+        this.startPov = startPov;
+        this.startData = startData;
+      };
+      Drag.prototype.update = function(data) {
+        if (this.dragging) {
+          //console.log(this.startData);
+          var horizontalGyro = 0;
+          if (data.gyro !== undefined) {
+            horizontalGyro = data.gyro[2] * 0.1;
+          }
+
+          var newHeading = panorama.getPov().heading - horizontalGyro;
+          var newPitch = -1 * parseInt(data.euler.pitch*100);
+
+          var newPov = {
+            heading: newHeading,
+            pitch: newPitch
+          };
+
+          var now = new Date();
+          if (!window.lastUpdate || (now - window.lastUpdate) > (1000/30)) {
+            panorama.setPov(newPov);
+            window.lastUpdate = now;
+          }
+        }
+      };
+      Drag.prototype.stop = function(endData) {
+        this.dragging = false;
+      };
+      window.drag = new Drag();
+
+      var handleData = function(data) {
+        //console.log("got data:", data);
+        if (data.pose) {
+          var pose = data.pose.type;
+
+          //console.log("got pose", data.pose);
+
+          if (pose === 1) { // got fist
+            drag.start(panorama.getPov(), data);
+          }
+
+          if (pose === 0 && window.prevPose === 1) { // rest and the previous pose was fist
+            drag.stop(data);
+          }
+
+          if (pose === 0 || pose === 1) {
+            window.prevPose = pose;
+          }
+        }
+
+        drag.update(data);
+      };
+
+      initMyo();
+    </script>
   </body>
 </html>
