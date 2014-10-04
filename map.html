@@ -87,6 +87,10 @@
 
       var setStreetView = function(locationName) {
         console.log("set street view", locationName);
+        if (locationName.toLowerCase() === "home") {
+          startInit();
+          return;
+        }
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode( { 'address': locationName}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
