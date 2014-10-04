@@ -1,4 +1,4 @@
-                                <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Myo Street View</title>
@@ -90,6 +90,7 @@
       };
 
       var setStreetView = function(locationName) {
+        console.log("set street view", locationName);
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode( { 'address': locationName}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
@@ -142,13 +143,12 @@
       window.modalIsOpened = false;
 
       var invokeVoiceCommand = function() {
-        console.log("invoke voice command");
         if (modalIsOpened) return;
         var $vexContent = vex.open({
           content: "<div id='microphone'></div>"+
                    "<div id='result'></div>"+
                    "<div id='info'></div>",
-          
+
           afterOpen: function() {
             window.modalIsOpened = true;
             var mic = new Wit.Microphone(document.getElementById("microphone"));
@@ -168,11 +168,11 @@
               info("Error: " + err);
             };
             mic.onresult = function (intent, entities) {
-              var locationName = entities[0];
+              var locationName = entities.location.value;
               if (locationName)
                 setStreetView(locationName);
               window.modalIsOpened = false;
-              vex.close($vexContent.data().vex.id); 
+              vex.close($vexContent.data().vex.id);
             };
             mic.connect("MIXVQH73JWBK67JNLCV3O7MY57UOAGRD");
             // mic.start();
@@ -217,4 +217,4 @@
   </body>
 </html>
 
-                            
+
