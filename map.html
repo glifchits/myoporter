@@ -129,14 +129,18 @@
       };
       window.drag = new Drag();
 
+      window.modalIsOpened = false;
+
       var invokeVoiceCommand = function() {
         console.log("invoke voice command");
-        vex.open({
+        if (modalIsOpened) return;
+        var $vexContent = vex.open({
           content: "<div id='microphone'></div>"+
                    "<div id='result'></div>"+
                    "<div id='info'></div>",
           
           afterOpen: function() {
+            window.modalIsOpened = true;
             var mic = new Wit.Microphone(document.getElementById("microphone"));
             var info = function (msg) {
               document.getElementById("info").innerHTML = msg;
@@ -155,11 +159,18 @@
             };
             mic.onresult = function (intent, entities) {
               var locationName = entities[0];
-              setStreetView(locationName);
+              if (locationName)
+                setStreetView(locationName);
+              window.modalIsOpened = false;
+              vex.close($vexContent.data().vex.id); 
             };
             mic.connect("MIXVQH73JWBK67JNLCV3O7MY57UOAGRD");
             // mic.start();
             // mic.stop();
+          },
+
+          afterClose: function() {
+            window.modalIsOpened = false;
           }
         });
       };
