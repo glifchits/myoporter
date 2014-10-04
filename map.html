@@ -17,8 +17,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="myojs/myojs-0.8.6.js"></script>
     <script type="text/javascript">
-      var fenway = new google.maps.LatLng(42.345573,-71.098326);
-      var googleTo = new google.maps.LatLng(43.650691, -79.383967);
+      var getLatLng = function(lat, lng) {
+        return new google.maps.LatLng(lat, lng);
+      };
+
+      var fenway = getLatLng(42.345573,-71.098326);
+      var googleTo = getLatLng(43.650691, -79.383967);
+
       function startAtCoordinates(latlng) {
         var panoramaOptions = {
           position: latlng,
@@ -29,8 +34,7 @@
         };
         window.panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
       }
-      var startInit = function() { return startAtCoordinates(googleTo); };
-      google.maps.event.addDomListener(window, 'load', startInit);
+      var startInit = function() { return startAtCoordinates(googleTo); }; google.maps.event.addDomListener(window, 'load', startInit);
     </script>
   </head>
   <body>
