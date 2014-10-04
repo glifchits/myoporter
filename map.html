@@ -6,15 +6,11 @@
       html, body, #map-canvas {
           height: 100%; margin: 0; padding: 0;
       }
-      #lean_overlay {
-          position: fixed;
-          z-index:100;
-          top: 0px;
-          left: 0px;
-          height:100%;
-          width:100%;
-          background: #000;
-          display: none;
+      .vex-content {
+        text-align: center;
+      }
+      #microphone {
+        margin: 0 auto;
       }
     </style>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAk2PrW5CDvb_dGK8PDthfZ95lYgM2hGbQ"></script>
@@ -143,8 +139,11 @@
       window.modalIsOpened = false;
 
       var invokeVoiceCommand = function() {
-        if (modalIsOpened) return;
-        var $vexContent = vex.open({
+        if (modalIsOpened) {
+          vex.close($vexContent.data().vex.id);
+          return;
+        }
+        window.$vexContent = vex.open({
           content: "<div id='microphone'></div>"+
                    "<div id='result'></div>"+
                    "<div id='info'></div>",
