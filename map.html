@@ -37,7 +37,12 @@
           pov: {
             heading: 0,
             pitch: 0
-          }
+          },
+          panControl: false,
+          linksControl: false,
+          streetViewControl: false,
+          addressControl: false,
+          zoomControl: false
         };
         window.panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
       };
@@ -178,11 +183,12 @@
               vex.close($vexContent.data().vex.id);
             };
             mic.connect("MIXVQH73JWBK67JNLCV3O7MY57UOAGRD");
-            // mic.start();
+            //mic.start();
             // mic.stop();
           },
 
           afterClose: function() {
+            mic.stop();
             window.modalIsOpened = false;
           }
         });
