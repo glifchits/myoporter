@@ -18,11 +18,12 @@
     <script type="text/javascript">
       function initialize() {
         var fenway = new google.maps.LatLng(42.345573,-71.098326);
+        var googleTo = new google.maps.LatLng(43.650691, -79.383967);
         var panoramaOptions = {
-          position: fenway,
+          position: googleTo,
           pov: {
-            heading: 34,
-            pitch: 10
+            heading: 0,
+            pitch: 0
           }
         };
         window.panorama = new google.maps.StreetViewPanorama(document.getElementById('map-canvas'), panoramaOptions);
@@ -66,17 +67,25 @@
       };
       Drag.prototype.update = function(data) {
         if (this.dragging) {
-          console.log(this.startData);
+          //console.log(this.startData);
+          var horizontalGyro = 0;
+          if (data.gyro !== undefined) {
+            horizontalGyro = data.gyro[2] * 0.1;
+          }
 
-          var newHeading = this.startPov.heading;
+          var newHeading = panorama.getPov().heading - horizontalGyro;
           var newPitch = parseInt(data.euler.pitch*100);
 
-          panorama.setPov({
+          var newPov = {
             heading: newHeading,
             pitch: newPitch
-          });
+          };
 
-          console.log(this.startData, data);
+          var now = new Date();
+          if (!window.lastUpdate || (now - window.lastUpdate) > (1000/30)) {
+            panorama.setPov(newPov);
+            window.lastUpdate = now;
+          }
         }
       };
       Drag.prototype.stop = function(endData) {
@@ -84,7 +93,6 @@
         console.log('stopped dragging');
       };
       window.drag = new Drag();
-      console.log(drag);
 
       var handleData = function(data) {
         //console.log("got data:", data);
